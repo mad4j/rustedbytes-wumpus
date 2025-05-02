@@ -1,6 +1,29 @@
 use macroquad::prelude::*;
 use std::f32::consts::PI; // Per usare il valore di Pi greco
 
+/// Configurazione della finestra di Macroquad.
+/// Questa funzione viene chiamata all'avvio per impostare i parametri della finestra.
+fn window_conf() -> Conf {
+    Conf {
+        // Titolo della finestra
+        window_title: "Cerchi Concentrici HD AA".to_string(),
+        // Dimensioni desiderate della finestra in pixel
+        window_width: 800,
+        window_height: 600,
+        // Abilita il supporto per display ad alta densità di pixel (Retina, HiDPI).
+        // Importante per avere un rendering corretto alla risoluzione specificata.
+        high_dpi: true,
+        // Attiva il Multi-Sample Anti-Aliasing (MSAA) per smussare i bordi.
+        // Valori comuni sono 2, 4, 8. Un valore più alto migliora la qualità
+        // ma richiede più risorse GPU. 4 è un buon compromesso.
+        sample_count: 4,
+        // Altre opzioni (es. fullscreen: false, window_resizable: true)
+        // possono essere aggiunte qui se necessario.
+        ..Default::default() // Usa i valori predefiniti per le altre opzioni non specificate
+    }
+}
+
+
 /// Calcola le posizioni (coordinate dei centri) dei nodi distribuiti
 /// uniformemente lungo la circonferenza specificata.
 ///
@@ -43,13 +66,13 @@ fn calculate_node_positions(
     positions // Restituisce il vettore di posizioni
 }
 
-// Configurazione della finestra principale di macroquad
-#[macroquad::main("Cerchi Concentrici (Funzione Dedicata)")]
+// Configurazione della finestra principale di macroquad usando la funzione window_conf
+#[macroquad::main(window_conf)]
 async fn main() {
     // --- Costanti Configurabili ---
     // const TOTAL_DOTS: usize = 20; // Non più usata direttamente per il calcolo principale
     const NUM_RINGS: usize = 3;
-    const DOT_RADIUS: f32 = 6.0;     // Raggio dei cerchi piccoli (nodi)
+    const DOT_RADIUS: f32 = 12.0;     // Raggio dei cerchi piccoli (nodi)
     const RING_THICKNESS: f32 = 2.0; // Spessore delle linee guida
 
     // Raggi delle 3 circonferenze concentriche
@@ -73,7 +96,8 @@ async fn main() {
 
         // --- Disegna le Circonferenze Concentriche Guida (Opzionale) ---
         for &radius in ring_radii.iter() {
-            draw_circle_lines(center_x, center_y, radius, RING_THICKNESS, LIGHTGRAY);
+            //draw_circle_lines(center_x, center_y, radius, RING_THICKNESS, LIGHTGRAY);
+            draw_poly_lines(center_x, center_y, 200, radius, 0.0, RING_THICKNESS, LIGHTGRAY);
         }
 
         // --- Calcola e Disegna i Nodi usando la funzione dedicata ---
