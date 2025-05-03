@@ -99,9 +99,9 @@ impl GameModel {
 
             vec![16, 19, 10],  // 15
             vec![15, 17, 12],  // 16
-            vec![16, 18, 14], // 17
-            vec![17, 19, 6], // 18
-            vec![15, 18, 8], // 19
+            vec![16, 18, 14],  // 17
+            vec![17, 19, 6],   // 18
+            vec![15, 18, 8],   // 19
         ]
     }
 
@@ -320,7 +320,7 @@ impl GameView {
     }
 
     fn draw(&self, model: &GameModel) {
-        clear_background(BLACK);
+        clear_background(WHITE);
         
         // Disegna le connessioni tra le stanze (tunnel)
         
@@ -355,16 +355,16 @@ impl GameView {
             };
             
             draw_circle(pos.x, pos.y, ROOM_RADIUS, color);
-            draw_text(&i.to_string(), pos.x - 10.0, pos.y + 8.0, self.font_size, WHITE);
+            draw_text(&i.to_string(), pos.x - 10.0, pos.y + 8.0, self.font_size, BLUE);
         }
         
         // Disegna l'interfaccia utente
         let message_width = measure_text(&model.message, None, self.font_size as u16, 1.0).width;
-        draw_text(&model.message, SCREEN_WIDTH/2.0 - message_width/2.0, SCREEN_HEIGHT - 50.0, self.font_size, WHITE);
+        draw_text(&model.message, SCREEN_WIDTH/2.0 - message_width/2.0, SCREEN_HEIGHT - 50.0, self.font_size, BLACK);
         
         // Disegna lo stato della freccia
-        let arrow_text = if model.has_arrow { "Freccia: ✓" } else { "Freccia: ✗" };
-        draw_text(arrow_text, 20.0, 30.0, self.font_size, WHITE);
+        let arrow_text = if model.has_arrow { "Freccia: [x]" } else { "Freccia: [ ]" };
+        draw_text(arrow_text, 20.0, 30.0, self.font_size, BLUE);
         
         // Disegna i comandi disponibili
         draw_text("Usa il mouse per muoverti o tirare frecce", 20.0, SCREEN_HEIGHT - 20.0, self.font_size - 5.0, LIGHTGRAY);
