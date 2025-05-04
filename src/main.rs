@@ -49,7 +49,7 @@ pub const START_ANGLES: [f32; NUM_RINGS] = [-0.5*PI, -0.5*PI, 0.5*PI];
 // ----- MODEL -----
 struct GameModel {
     // Topologia della caverna (grafo)
-    tunnels: Vec<Vec<usize>>,
+    tunnels: [[usize; NUM_TUNNELS_PER_ROOM]; NUM_ROOMS],
     // Posizioni degli elementi del gioco
     player_position: usize,
     wumpus_position: usize,
@@ -91,32 +91,32 @@ impl GameModel {
         model
     }
 
-    fn create_cave_topology() -> Vec<Vec<usize>> {
+    fn create_cave_topology() -> [[usize; NUM_TUNNELS_PER_ROOM]; NUM_ROOMS]  {
         // Implementazione del dodecaedro standard per Hunt the Wumpus
         // In alternativa si potrebbe generare un grafo casuale
-        vec![
-            vec![1, 4, 5],    // 0
-            vec![0, 2, 7],    // 1
-            vec![1, 3, 9],    // 2
-            vec![2, 4, 11],   // 3
-            vec![0, 3, 13],   // 4
+        [
+            [1, 4, 5],    // 0
+            [0, 2, 7],    // 1
+            [1, 3, 9],    // 2
+            [2, 4, 11],   // 3
+            [0, 3, 13],   // 4
 
-            vec![6, 14, 0],   // 5
-            vec![5, 7, 18],   // 6
-            vec![6, 8, 1],    // 7
-            vec![7, 9, 19],   // 8
-            vec![8, 10, 2],   // 9
-            vec![9, 11, 15],  // 10
-            vec![10, 12, 3],  // 11
-            vec![11, 13, 16], // 12
-            vec![12, 14, 4],  // 13
-            vec![5, 13, 17],  // 14
+            [6, 14, 0],   // 5
+            [5, 7, 18],   // 6
+            [6, 8, 1],    // 7
+            [7, 9, 19],   // 8
+            [8, 10, 2],   // 9
+            [9, 11, 15],  // 10
+            [10, 12, 3],  // 11
+            [11, 13, 16], // 12
+            [12, 14, 4],  // 13
+            [5, 13, 17],  // 14
 
-            vec![16, 19, 10],  // 15
-            vec![15, 17, 12],  // 16
-            vec![16, 18, 14],  // 17
-            vec![17, 19, 6],   // 18
-            vec![15, 18, 8],   // 19
+            [16, 19, 10],  // 15
+            [15, 17, 12],  // 16
+            [16, 18, 14],  // 17
+            [17, 19, 6],   // 18
+            [15, 18, 8],   // 19
         ]
     }
 
@@ -327,6 +327,8 @@ impl GameModel {
 struct GameView {
     font_size: f32,
     title_font_size: f32,
+
+    splash_texture: Option<Texture2D>,
 }
 
 impl GameView {
@@ -334,15 +336,26 @@ impl GameView {
         GameView {
             font_size: 20.0,
             title_font_size: 40.0,
+            splash_texture: None,
         }
     }
 
-    async fn load_resources(&self) {
-        // Qui potremmo caricare immagini o altri asset
+    async fn load_resources(&mut self) {
+        self.splash_texture = load_texture("assets/splash.png").await.ok();
     }
 
     fn draw_splash(&self) {
         clear_background(BLACK);
+        
+        if let Some(splash_texture) = &self.splash_texture {
+            draw_texture(
+                splash_texture,
+                SCREEN_WIDTH / 2.0 - splash_texture.width() / 2.0,
+                SCREEN_HEIGHT / 2.0 - splash_texture.height() / 2.0,
+                WHITE,
+            );
+        }
+
         
         // Titolo del gioco
         let title = "HUNT THE WUMPUS";
