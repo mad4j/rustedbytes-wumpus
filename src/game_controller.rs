@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
-use crate::{game_model::GameModel, GameView};
+use crate::{game_model::GameModel, game_view::GameView};
+use macroquad::prelude::*; // Update the import to use the new module
 
 pub struct GameController {
     pub shoot_mode: bool,
@@ -22,7 +22,9 @@ impl GameController {
             if model.has_arrow {
                 self.shoot_mode = !self.shoot_mode;
                 if self.shoot_mode {
-                    model.message = String::from("Modalità tiro attivata. Clicca su una stanza adiacente per tirare la freccia.");
+                    model.message = String::from(
+                        "Modalità tiro attivata. Clicca su una stanza adiacente per tirare la freccia.",
+                    );
                 } else {
                     model.message = String::from("Modalità movimento attivata.");
                     model.generate_warnings();

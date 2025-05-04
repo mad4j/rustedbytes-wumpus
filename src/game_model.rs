@@ -1,6 +1,9 @@
-use std::{collections::HashSet, f32::consts::PI};
+use ::rand::{
+    Rng, rng,
+    seq::{IndexedRandom, SliceRandom},
+};
 use macroquad::prelude::*;
-use ::rand::{rng, seq::{IndexedRandom, SliceRandom}, Rng};
+use std::{collections::HashSet, f32::consts::PI};
 
 // Constants
 const NUM_ROOMS: usize = 20;
@@ -45,7 +48,9 @@ impl GameModel {
             game_over: false,
             win: false,
             has_arrow: true,
-            message: String::from("Benvenuto a Hunt the Wumpus! Usa le frecce per muoverti, spazio per tirare una freccia."),
+            message: String::from(
+                "Benvenuto a Hunt the Wumpus! Usa le frecce per muoverti, spazio per tirare una freccia.",
+            ),
             room_positions,
             moves_count: 0,
             start_time: 0.0,
@@ -72,11 +77,11 @@ impl GameModel {
             [11, 13, 16], // 12
             [12, 14, 4],  // 13
             [5, 13, 17],  // 14
-            [16, 19, 10],  // 15
-            [15, 17, 12],  // 16
-            [16, 18, 14],  // 17
-            [17, 19, 6],   // 18
-            [15, 18, 8],   // 19
+            [16, 19, 10], // 15
+            [15, 17, 12], // 16
+            [16, 18, 14], // 17
+            [17, 19, 6],  // 18
+            [15, 18, 8],  // 19
         ]
     }
 
@@ -108,7 +113,14 @@ impl GameModel {
         let center_y = SCREEN_HEIGHT / 2.0;
 
         (0..NUM_RINGS)
-            .flat_map(|i| GameModel::calculate_node_positions_by_ring((center_x, center_y), RING_RADII[i], NODES_PER_RING[i], START_ANGLES[i]))
+            .flat_map(|i| {
+                GameModel::calculate_node_positions_by_ring(
+                    (center_x, center_y),
+                    RING_RADII[i],
+                    NODES_PER_RING[i],
+                    START_ANGLES[i],
+                )
+            })
             .collect()
     }
 
@@ -133,7 +145,9 @@ impl GameModel {
         self.game_over = false;
         self.win = false;
         self.has_arrow = true;
-        self.message = String::from("Benvenuto a Hunt the Wumpus! Usa le frecce per muoverti, spazio per tirare una freccia.");
+        self.message = String::from(
+            "Benvenuto a Hunt the Wumpus! Usa le frecce per muoverti, spazio per tirare una freccia.",
+        );
         self.moves_count = 0;
         self.start_time = get_time();
         self.end_time = 0.0;
@@ -162,16 +176,21 @@ impl GameModel {
         if self.bat_positions.contains(&self.player_position) {
             let mut rng = rng();
             self.player_position = rng.random_range(0..NUM_ROOMS);
-            self.message = format!("Sei stato trasportato da un pipistrello gigante alla stanza {}!", self.player_position);
+            self.message = format!(
+                "Sei stato trasportato da un pipistrello gigante alla stanza {}!",
+                self.player_position
+            );
 
             if self.player_position == self.wumpus_position {
-                self.message = String::from("Sei stato trasportato nella stanza del Wumpus! Game Over!");
+                self.message =
+                    String::from("Sei stato trasportato nella stanza del Wumpus! Game Over!");
                 self.game_over = true;
                 return true;
             }
 
             if self.pit_positions.contains(&self.player_position) {
-                self.message = String::from("Sei stato trasportato in una stanza con una fossa! Game Over!");
+                self.message =
+                    String::from("Sei stato trasportato in una stanza con una fossa! Game Over!");
                 self.game_over = true;
                 return true;
             }
@@ -206,9 +225,16 @@ impl GameModel {
         }
 
         if warnings.is_empty() {
-            self.message = format!("Ti trovi nella stanza {}. Tutto sembra tranquillo.", self.player_position);
+            self.message = format!(
+                "Ti trovi nella stanza {}. Tutto sembra tranquillo.",
+                self.player_position
+            );
         } else {
-            self.message = format!("Ti trovi nella stanza {}. {}", self.player_position, warnings.join(" "));
+            self.message = format!(
+                "Ti trovi nella stanza {}. {}",
+                self.player_position,
+                warnings.join(" ")
+            );
         }
     }
 
@@ -231,7 +257,10 @@ impl GameModel {
             self.win = true;
             self.end_time = get_time();
         } else {
-            self.message = format!("Hai mancato! La freccia è andata nella stanza {}.", target_room);
+            self.message = format!(
+                "Hai mancato! La freccia è andata nella stanza {}.",
+                target_room
+            );
 
             let mut rng = rng();
             if rng.random::<f32>() < 0.75 {
@@ -239,7 +268,8 @@ impl GameModel {
                 let new_wumpus_pos = *wumpus_tunnels.choose(&mut rng).unwrap();
 
                 if new_wumpus_pos == self.player_position {
-                    self.message = String::from("Il Wumpus si è svegliato e ti ha trovato! Game Over!");
+                    self.message =
+                        String::from("Il Wumpus si è svegliato e ti ha trovato! Game Over!");
                     self.game_over = true;
                     self.end_time = get_time();
                 } else {
